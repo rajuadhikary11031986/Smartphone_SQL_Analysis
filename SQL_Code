@@ -1,0 +1,145 @@
+SQL Project: Smartphone Usage & Addiction Analysis
+
+// Create database
+
+CREATE TABLE smartphone_usage (
+    transaction_id VARCHAR(20),
+    user_id VARCHAR(20),
+    age INT,
+    gender VARCHAR(10),
+    daily_screen_time_hours DECIMAL(5,2),
+    social_media_hours DECIMAL(5,2),
+    gaming_hours DECIMAL(5,2),
+    work_study_hours DECIMAL(5,2),
+    sleep_hours DECIMAL(5,2),
+    notifications_per_day INT,
+    app_opens_per_day INT,
+    weekend_screen_time DECIMAL(5,2),
+    stress_level VARCHAR(20),
+    academic_work_impact VARCHAR(20),
+    addiction_level VARCHAR(20),
+    addicted_label INT
+);
+
+select * from smartphone_usage;
+
+//Daily Screentime
+
+SELECT ROUND(AVG(daily_screen_time_hours),2) AS avg_screen_time
+FROM smartphone_usage;
+
+//Addiction Distribution
+
+SELECT addiction_level, COUNT(*) AS total_users
+FROM smartphone_usage
+GROUP BY addiction_level
+ORDER BY total_users DESC;
+
+//Addicted vs Non-Addicted
+
+SELECT 
+    addicted_label,
+    COUNT(*) AS user_count
+FROM smartphone_usage
+GROUP BY addicted_label;
+
+
+//Screen Timeby Gender
+
+
+SELECT gender,
+       ROUND(AVG(daily_screen_time_hours),2) AS avg_screen_time
+FROM smartphone_usage
+GROUP BY gender;
+
+
+//Age_Group Analysis
+
+SELECT 
+    CASE 
+        WHEN age < 18 THEN 'Teen'
+        WHEN age BETWEEN 18 AND 25 THEN 'Young Adult'
+        WHEN age BETWEEN 26 AND 40 THEN 'Adult'
+        ELSE 'Senior'
+    END AS age_group,
+    ROUND(AVG(daily_screen_time_hours),2) AS avg_screen_time
+FROM smartphone_usage
+GROUP BY age_group;
+
+
+//Top Factors Affecting Addiction
+
+SELECT 
+    addiction_level,
+    ROUND(AVG(social_media_hours),2) AS avg_social,
+    ROUND(AVG(gaming_hours),2) AS avg_gaming,
+    ROUND(AVG(work_study_hours),2) AS avg_work
+FROM smartphone_usage
+GROUP BY addiction_level;
+
+
+//Sleep vs Addiction
+
+
+SELECT addiction_level,
+       ROUND(AVG(sleep_hours),2) AS avg_sleep
+FROM smartphone_usage
+GROUP BY addiction_level;
+
+
+//Stress vs Addiction
+
+SELECT stress_level, COUNT(*) AS users
+FROM smartphone_usage
+GROUP BY stress_level
+ORDER BY users DESC;
+
+
+//Weekend vs Weekday_Usage
+
+SELECT 
+    ROUND(AVG(daily_screen_time_hours),2) AS weekday_avg,
+    ROUND(AVG(weekend_screen_time),2) AS weekend_avg
+FROM smartphone_usage;
+
+
+
+//Heavy Users
+
+SELECT *
+FROM smartphone_usage
+WHERE daily_screen_time_hours > 8
+AND addiction_level IN ('Moderate', 'Severe');
+
+//Correlation_like Insight
+
+SELECT 
+    addicted_label,
+    ROUND(AVG(notifications_per_day),2) AS avg_notifications,
+    ROUND(AVG(app_opens_per_day),2) AS avg_app_opens
+FROM smartphone_usage
+GROUP BY addicted_label;
+
+
+//Ranking Most Addicted Users
+
+SELECT user_id,
+       daily_screen_time_hours,
+       RANK() OVER (ORDER BY daily_screen_time_hours DESC) AS rank
+FROM smartphone_usage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
